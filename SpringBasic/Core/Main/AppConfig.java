@@ -9,7 +9,10 @@ import hello.core.member.MemberServiceImpl;
 import hello.core.member.MemoryMemberRepository;
 import hello.core.order.OrderService;
 import hello.core.order.OrderServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class AppConfig {
     // 1.AppConfig에서 실제 동작에 필요한 구현 객체를 생성한다.
     // 2.생성자를 통해서 주입(연결)한다. 생성자 주입으로 인해 OCP, DIP 원칙을 지킬 수 있다.
@@ -22,18 +25,22 @@ public class AppConfig {
 //    AppConfig는 사용 영역으로써 사용되며, 수정은 AppConfig에서만 일어난다.
     
     //생성자 주입
+    @Bean
     public MemberService memberService() {
         return new MemberServiceImpl(memberRepository());
     }
 
-    private MemberRepository memberRepository() {
+    @Bean
+    public MemberRepository memberRepository() {
         return new MemoryMemberRepository();
     }
 
+    @Bean
     public OrderService orderService() {
         return new OrderServiceImpl(discountPolicy(), memberRepository());
     }
 
+    @Bean
     public DiscountPolicy discountPolicy() {
 //        return new FixDiscountPolicy();
         return new RateDiscountPolicy();
