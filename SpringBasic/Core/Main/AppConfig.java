@@ -1,7 +1,6 @@
 package hello.core;
 
 import hello.core.discount.DiscountPolicy;
-import hello.core.discount.FixDiscountPolicy;
 import hello.core.discount.RateDiscountPolicy;
 import hello.core.member.MemberRepository;
 import hello.core.member.MemberService;
@@ -23,20 +22,26 @@ public class AppConfig {
     //관심사의 분리 : 객체를 생성하고 연결하는 역할과 실행하는 역할이 명확히 분리
 
 //    AppConfig는 사용 영역으로써 사용되며, 수정은 AppConfig에서만 일어난다.
+
+    //@Bean memberService -> new MemoryMemberRepository()
+    //@Bean orderService -> new MemoryMemberRepository() 이 둘은 하나의 객체를 공유하는 것일까??
     
     //생성자 주입
     @Bean
     public MemberService memberService() {
+        System.out.println("Call AppConfig.memberService");
         return new MemberServiceImpl(memberRepository());
     }
 
     @Bean
     public MemberRepository memberRepository() {
+        System.out.println("Call AppConfig.memberRepository");
         return new MemoryMemberRepository();
     }
 
     @Bean
     public OrderService orderService() {
+        System.out.println("Call AppConfig.orderService");
         return new OrderServiceImpl(discountPolicy(), memberRepository());
     }
 
