@@ -3,7 +3,10 @@ package hello.core.order;
 import hello.core.discount.DiscountPolicy;
 import hello.core.member.Member;
 import hello.core.member.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OrderServiceImpl implements OrderService{
 
 
@@ -29,10 +32,43 @@ public class OrderServiceImpl implements OrderService{
     private final DiscountPolicy discountPolicy;
     private final MemberRepository memberRepository;
 
+    /*필드 주입
+        코드가 간결해서 많은 개발자들을 유혹하지만 외부에서 변경이 불가능해서 테스트 하기 힘들다는 치명적인 단점이 있다
+        DI 프레임워크가 없으면 아무것도 할 수 없다 - 순수한 자바코드로 테스트
+        사용하지말자
+            애플리케이션의 실제 코드와 관계 없는 테스트 코드
+            스프링 설정을 목적으로 하는 @Configuration 같은 곳에서만 특별한 용도로 사용
+
+    @Autowired
+    private DiscountPolicy discountPolicy;
+    @Autowired
+    private MemberRepository memberRepository;
+    */
+
+    /*생성자 주입(우선순위1) - 빈 생성시 주입
+        생성자 호출시점에 딱 1번만 호츨되는 것이 보장
+        불변, 필수 의존관계에 사용  - 셋겟메서드를 만들지 않기 때문에 불변
+        생성자가 하나 일경우 @Autowried를 생략해도 자동 주입
+    */
+    @Autowired
     public OrderServiceImpl(DiscountPolicy discountPolicy, MemberRepository memberRepository) {
         this.discountPolicy = discountPolicy;
         this.memberRepository = memberRepository;
     }
+    /*수정자 주입(setter 우선순위2) - 생성된 이후 주입
+        선택, 변경 가능성이 있는 의존관계에 사용
+        자바빈 프로퍼티 규약의 수정자 메서드 방식을 사용하는 방법이다.
+        선택적으로 사용할때는 @Autowired(required = false)로 필수 값이 아니라는 것을 명시
+
+    @Autowired
+    public void setDiscountPolicy(DiscountPolicy discountPolicy) {
+        this.discountPolicy = discountPolicy;
+    }
+
+    @Autowired
+    public void setMemberRepository(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }*/
 
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
